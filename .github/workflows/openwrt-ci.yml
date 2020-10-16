@@ -89,11 +89,11 @@ jobs:
           # CONFIG_TARGET_bcm53xx=y
           # CONFIG_TARGET_bcm53xx_DEVICE_phicomm-k3=y
           CONFIG_PACKAGE_luci-app-guest-wifi=y
-          CONFIG_PACKAGE_luci-app-wifischedule=y
-          CONFIG_PACKAGE_luci-theme-atmaterial=y
-          CONFIG_PACKAGE_luci-app-flowoffload=y
-          CONFIG_PACKAGE_ipv6helper=y
-          CONFIG_PACKAGE_ip6tables=y
+          # CONFIG_PACKAGE_luci-app-wifischedule=y
+          # CONFIG_PACKAGE_luci-theme-atmaterial=y
+          # CONFIG_PACKAGE_luci-app-flowoffload=y
+          # CONFIG_PACKAGE_ipv6helper=y
+          # CONFIG_PACKAGE_ip6tables=y
           EOF
           #
           # ===============================================================
