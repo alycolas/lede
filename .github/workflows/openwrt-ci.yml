@@ -10,392 +10,204 @@
 name: K3
 
 on:
-    push:
-        branches: 
-            - master
-              #     â†‘â†‘â†‘ æ”¹æˆä½ çš„åˆ†æ”¯å, ä¸€èˆ¬æ˜¯master
-              # schedule:
-              #   - cron: 0 20 * * *
-              # release:
-              #   types: [published]
+  push:
+    branches: 
+      - master
+  #     ¡ü¡ü¡ü ¸Ä³ÉÄãµÄ·ÖÖ§Ãû, Ò»°ãÊÇmaster
+  # schedule:
+  #   - cron: 0 20 * * *
+  # release:
+  #   types: [published]
 
-        jobs:
-            build:
-                runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-                steps:
-                    - name: Checkout
-                      uses: actions/checkout@master
-                      with:
-                          ref: master
-                          #      â†‘â†‘â†‘ æ”¹æˆä½ çš„åˆ†æ”¯å, ä¸€èˆ¬æ˜¯master
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+        #      ¡ü¡ü¡ü ¸Ä³ÉÄãµÄ·ÖÖ§Ãû, Ò»°ãÊÇmaster
 
-                    - name: Initialization environment
-                      env:
-                          DEBIAN_FRONTEND: noninteractive
-                          run: |
-                              docker rmi `docker images -q`
-                              echo "Deleting files, please wait ..."
-                              sudo rm -rf \
-                              /usr/share/dotnet \
-                              /etc/mysql \
-                              /etc/php
-                              sudo -E apt-get -y purge \
-                              azure-cli \
-                              ghc* \
-                              zulu* \
-                              hhvm \
-                              llvm* \
-                              firefox \
-                              google* \
-                              dotnet* \
-                              powershell \
-                              openjdk* \
-                              mysql* \
-                              php*
-                              sudo -E apt-get update
-                              sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1
-                              libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx
-                              libelf-dev autoconf automake libtool autopoint device-tree-compiler
-                              sudo -E apt-get -y autoremove --purge
-                              sudo -E apt-get clean
-
-                    - name: serverchan
-                      run: |
-                          cd package
-                          mkdir openwrt-packages
-                          cd openwrt-packages
-                          git clone https://github.com/tty228/luci-app-serverchan.git
-                          git clone
-                          https://github.com/openwrt-develop/luci-theme-atmaterial.git
-                    - name: Update feeds
-                      run: |
-                          ./scripts/feeds update -a
-                          ./scripts/feeds install -a
-                    - name: Costom configure
-                      file
-                      run: |
-                          rm -f
-                          ./.config*
-                          touch
-                          ./.config
-                          #
-                          #
-                          ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†========================
-                          # 
-                          # 
-                          #
-                          å¦‚æžœä¸å¯¹æœ¬åŒºå—åšå‡ºä»»ä½•ç¼–è¾‘,
-                          åˆ™ç”Ÿæˆé»˜è®¤é…ç½®å›ºä»¶. 
-                          # 
-                          #
-                      ä»¥ä¸‹ä¸ºå®šåˆ¶åŒ–å›ºä»¶é€‰é¡¹å’Œè¯´æ˜Ž:
-                          # 
-                          #
-                          #
-                          æœ‰äº›æ’ä»¶/é€‰é¡¹æ˜¯é»˜è®¤å¼€å¯çš„,
-                          å¦‚æžœæƒ³è¦å…³é—­,
-                      è¯·å‚ç…§ä»¥ä¸‹ç¤ºä¾‹è¿›è¡Œç¼–å†™:
-                          # 
-                          #
-                          =========================================
-                          #
-                          |
-                          #
-                      å–æ¶ˆç¼–è¯‘VMwareé•œåƒ:
-                          |
-                          #
-                          |
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          |
-                          #
-                          |
-                          #
-                          CONFIG_VMDK_IMAGES
-                          is
-                          not
-                          set
-                          |
-                          #
-                          |
-                          EOF
-                          |
-                          #
-                          =========================================
-                          #
-                          # 
-                          #
-                          ä»¥ä¸‹æ˜¯ä¸€äº›æå‰å‡†å¤‡å¥½çš„ä¸€äº›æ’ä»¶é€‰é¡¹.
-                          #
-                          ç›´æŽ¥å–æ¶ˆæ³¨é‡Šç›¸åº”ä»£ç å—å³å¯åº”ç”¨.
-                          ä¸è¦å–æ¶ˆæ³¨é‡Šä»£ç å—ä¸Šçš„æ±‰å­—è¯´æ˜Ž.
-                          #
-                          å¦‚æžœä¸éœ€è¦ä»£ç å—é‡Œçš„æŸä¸€é¡¹é…ç½®,
-                          åªéœ€è¦åˆ é™¤ç›¸åº”è¡Œ.
-                          #
-                          #
-                          å¦‚æžœéœ€è¦å…¶ä»–æ’ä»¶,
-                          è¯·æŒ‰ç…§ç¤ºä¾‹è‡ªè¡Œæ·»åŠ .
-                          #
-                          æ³¨æ„,
-                          åªéœ€æ·»åŠ ä¾èµ–é“¾é¡¶ç«¯çš„åŒ….
-                          å¦‚æžœä½ éœ€è¦æ’ä»¶
-                          A,
-                          åŒæ—¶
-                          A
-                          ä¾èµ–
-                          B,
-                          å³åªéœ€è¦æ·»åŠ 
-                          A.
-                          # 
-                          #
-                          æ— è®ºä½ æƒ³è¦å¯¹å›ºä»¶è¿›è¡Œæ€Žæ ·çš„å®šåˆ¶,
-                          éƒ½éœ€è¦ä¸”åªéœ€è¦ä¿®æ”¹
-                          EOF
-                          å›žçŽ¯å†…çš„å†…å®¹.
-                          # 
-                          #
-                      ç¼–è¯‘x64å›ºä»¶:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          #
-                          CONFIG_TARGET_x86=y
-                          #
-                          CONFIG_TARGET_x86_64=y
-                          #
-                          CONFIG_TARGET_x86_64_Generic=y
-                          #
-                          CONFIG_TARGET_ramips=y
-                          #
-                          CONFIG_TARGET_ramips_mt7620=y
-                          #
-                          CONFIG_TARGET_ramips_mt7620_DEVICE_psg1218a=y
-                          CONFIG_TARGET_bcm53xx=y
-                          CONFIG_TARGET_bcm53xx_DEVICE_phicomm-k3=y
-                          EOF
-                          #
-                      å›ºä»¶åŽ‹ç¼©:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          CONFIG_TARGET_IMAGES_GZIP=y
-                          EOF
-                          #
-                      ç¼–è¯‘UEFIå›ºä»¶:
-                          #
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          #
-                          CONFIG_EFI_IMAGES=y
-                          #
-                          EOF
-                          #
-                      IPv6æ”¯æŒ:
-                          #
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          #
-                          CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
-                          #
-                          CONFIG_PACKAGE_ipv6helper=y
-                          #
-                          EOF
-                          #
-                      å¤šæ–‡ä»¶ç³»ç»Ÿæ”¯æŒ:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          CONFIG_PACKAGE_kmod-fs-nfs=y
-                          CONFIG_PACKAGE_kmod-fs-nfs-common=y
-                          CONFIG_PACKAGE_kmod-fs-nfs-v3=y
-                          CONFIG_PACKAGE_kmod-fs-nfs-v4=y
-                          CONFIG_PACKAGE_kmod-fs-ntfs=y
-                          CONFIG_PACKAGE_kmod-fs-squashfs=y
-                          EOF
-                          #
-                      USB3.0æ”¯æŒ:
-                          #
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          #
-                          CONFIG_PACKAGE_kmod-usb-ohci=y
-                          #
-                          CONFIG_PACKAGE_kmod-usb-ohci-pci=y
-                          #
-                          CONFIG_PACKAGE_kmod-usb2=y
-                          #
-                          CONFIG_PACKAGE_kmod-usb2-pci=y
-                          #
-                          CONFIG_PACKAGE_kmod-usb3=y
-                          #
-                          EOF
-                          #
-                      å¸¸ç”¨LuCIæ’ä»¶é€‰æ‹©:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          CONFIG_PACKAGE_luci-app-adbyby-plus=y
-                          #
-                          CONFIG_PACKAGE_luci-app-aria2=y
-                          #
-                          CONFIG_PACKAGE_luci-app-baidupcs-web=y
-                          #
-                          CONFIG_PACKAGE_luci-app-docker=y
-                          CONFIG_PACKAGE_luci-app-frpc=y
-                          #
-                          CONFIG_PACKAGE_luci-app-hd-idle=y
-                          #
-                          CONFIG_PACKAGE_luci-app-kodexplorer=y
-                          #
-                          CONFIG_PACKAGE_luci-app-minidlna=y
-                          #
-                          CONFIG_PACKAGE_luci-app-openvpn=y
-                          #
-                          CONFIG_PACKAGE_luci-app-openvpn-server=y
-                          #
-                          CONFIG_PACKAGE_luci-app-qbittorrent=y
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks=y
-                          #
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
-                          #
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Socks=y
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
-                          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
-                          CONFIG_PACKAGE_luci-app-ttyd=y
-                          #
-                          CONFIG_PACKAGE_luci-app-v2ray-server=y
-                          #
-                          CONFIG_PACKAGE_luci-app-verysync=y
-                          #
-                          CONFIG_PACKAGE_luci-app-webadmin=y
-                          CONFIG_PACKAGE_luci-app-serverchan=y
-                          #
-                          CONFIG_PACKAGE_luci-app-wrtbwmon=y
-                          CONFIG_PACKAGE_luci-app-syncdial=y
-                          CONFIG_PACKAGE_luci-app-zerotier=y
-                          CONFIG_PACKAGE_luci-app-flowoffload=y
-                          EOF
-                          #
-                      LuCIä¸»é¢˜:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          CONFIG_PACKAGE_luci-theme-argon=y
-                          CONFIG_PACKAGE_luci-theme-netgear=y
-                          CONFIG_PACKAGE_luci-theme-atmaterial=y
-                          EOF
-                          #
-                      å¸¸ç”¨è½¯ä»¶åŒ…:
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          CONFIG_PACKAGE_curl=y
-                          CONFIG_PACKAGE_htop=y
-                          CONFIG_PACKAGE_nano=y
-                          CONFIG_PACKAGE_screen=y
-                          CONFIG_PACKAGE_tree=y
-                          CONFIG_PACKAGE_vim-fuller=y
-                          CONFIG_PACKAGE_wget=y
-                          EOF
-                          #
-                          å–æ¶ˆç¼–è¯‘VMwareé•œåƒä»¥åŠé•œåƒå¡«å……
-                      (ä¸è¦åˆ é™¤è¢«ç¼©è¿›çš„æ³¨é‡Šç¬¦å·):
-                          cat
-                          >>
-                          .config
-                          <<EOF
-                          #
-                          CONFIG_TARGET_IMAGES_PAD
-                          is
-                          not
-                          set
-                          #
-                          CONFIG_VMDK_IMAGES
-                          is
-                          not
-                          set
-                          EOF
-                          # 
-                          #
-                          ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†ç»“æŸ========================
-                          # 
-                          sed
-                          -i
-                          's/^[
-                              \t]*//g'
-                              ./.config
-                              make
-                              defconfig
-                    -
-                      name:
-                          Download
-                          package
-                          source
-                          code
-                      run:
-                          |
-                          make
-                          download
-                          -j8
-                          find
-                          dl
-                          -size
-                          -1024c
-                          -exec
-                          ls
-                          -l
-                          {}
-                          \;
-                          find
-                          dl
-                          -size
-                          -1024c
-                          -exec
-                          rm
-                          -f
-                          {}
-                          \;
-                    -
-                      name:
-                          Compile
-                          firmware
-                      run:
-                          |
-                          echo
-                          -e
-                          "$(nproc)
-                          thread
-                          build."
-                          make
-                          -j$(nproc)
-                          V=s
-                    -
-                    name
-                      :
-                          Upload
-                          artifact
-                      uses:
-                          actions/upload-artifact@master
-                      with:
-                          name:
-                              OpenWrt
-                              firmware
-                          path:
-                              bin/targets
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          echo "Deleting files, please wait ..."
+          sudo rm -rf \
+            /usr/share/dotnet \
+            /etc/mysql \
+            /etc/php
+          sudo -E apt-get -y purge \
+            azure-cli \
+            ghc* \
+            zulu* \
+            hhvm \
+            llvm* \
+            firefox \
+            google* \
+            dotnet* \
+            powershell \
+            openjdk* \
+            mysql* \
+            php*
+          sudo -E apt-get update
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+     
+      - name: serverchan
+        run: |
+          cd package
+          mkdir openwrt-packages
+          cd openwrt-packages
+          git clone https://github.com/tty228/luci-app-serverchan.git
+          git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
+      - name: Update feeds
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+      - name: Costom configure file
+        run: |
+          rm -f ./.config*
+          touch ./.config
+          #
+          # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö========================
+          # 
+          # 
+          # Èç¹û²»¶Ô±¾Çø¿é×ö³öÈÎºÎ±à¼­, ÔòÉú³ÉÄ¬ÈÏÅäÖÃ¹Ì¼þ. 
+          # 
+          # ÒÔÏÂÎª¶¨ÖÆ»¯¹Ì¼þÑ¡ÏîºÍËµÃ÷:
+          # 
+          #
+          # ÓÐÐ©²å¼þ/Ñ¡ÏîÊÇÄ¬ÈÏ¿ªÆôµÄ, Èç¹ûÏëÒª¹Ø±Õ, Çë²ÎÕÕÒÔÏÂÊ¾Àý½øÐÐ±àÐ´:
+          # 
+          #          =========================================
+          #         |  # È¡Ïû±àÒëVMware¾µÏñ:                   |
+          #         |  cat >> .config <<EOF                   |
+          #         |  # CONFIG_VMDK_IMAGES is not set        |
+          #         |  EOF                                    |
+          #          =========================================
+          #
+          # 
+          # ÒÔÏÂÊÇÒ»Ð©ÌáÇ°×¼±¸ºÃµÄÒ»Ð©²å¼þÑ¡Ïî.
+          # Ö±½ÓÈ¡Ïû×¢ÊÍÏàÓ¦´úÂë¿é¼´¿ÉÓ¦ÓÃ. ²»ÒªÈ¡Ïû×¢ÊÍ´úÂë¿éÉÏµÄºº×ÖËµÃ÷.
+          # Èç¹û²»ÐèÒª´úÂë¿éÀïµÄÄ³Ò»ÏîÅäÖÃ, Ö»ÐèÒªÉ¾³ýÏàÓ¦ÐÐ.
+          #
+          # Èç¹ûÐèÒªÆäËû²å¼þ, Çë°´ÕÕÊ¾Àý×ÔÐÐÌí¼Ó.
+          # ×¢Òâ, Ö»ÐèÌí¼ÓÒÀÀµÁ´¶¥¶ËµÄ°ü. Èç¹ûÄãÐèÒª²å¼þ A, Í¬Ê± A ÒÀÀµ B, ¼´Ö»ÐèÒªÌí¼Ó A.
+          # 
+          # ÎÞÂÛÄãÏëÒª¶Ô¹Ì¼þ½øÐÐÔõÑùµÄ¶¨ÖÆ, ¶¼ÐèÒªÇÒÖ»ÐèÒªÐÞ¸Ä EOF »Ø»·ÄÚµÄÄÚÈÝ.
+          # 
+          # ±àÒëx64¹Ì¼þ:
+          cat >> .config <<EOF
+          # CONFIG_TARGET_x86=y
+          # CONFIG_TARGET_x86_64=y
+          # CONFIG_TARGET_x86_64_Generic=y
+          # CONFIG_TARGET_ramips=y
+          # CONFIG_TARGET_ramips_mt7620=y
+          # CONFIG_TARGET_ramips_mt7620_DEVICE_psg1218a=y
+          CONFIG_TARGET_bcm53xx=y
+          CONFIG_TARGET_bcm53xx_DEVICE_phicomm-k3=y
+          EOF
+          # ¹Ì¼þÑ¹Ëõ:
+          cat >> .config <<EOF
+          CONFIG_TARGET_IMAGES_GZIP=y
+          EOF
+          # ±àÒëUEFI¹Ì¼þ:
+          # cat >> .config <<EOF
+          # CONFIG_EFI_IMAGES=y
+          # EOF
+          # IPv6Ö§³Ö:
+          # cat >> .config <<EOF
+          # CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
+          # CONFIG_PACKAGE_ipv6helper=y
+          # EOF
+          # ¶àÎÄ¼þÏµÍ³Ö§³Ö:
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_kmod-fs-nfs=y
+          CONFIG_PACKAGE_kmod-fs-nfs-common=y
+          CONFIG_PACKAGE_kmod-fs-nfs-v3=y
+          CONFIG_PACKAGE_kmod-fs-nfs-v4=y
+          CONFIG_PACKAGE_kmod-fs-ntfs=y
+          CONFIG_PACKAGE_kmod-fs-squashfs=y
+          EOF
+          # USB3.0Ö§³Ö:
+          # cat >> .config <<EOF
+          # CONFIG_PACKAGE_kmod-usb-ohci=y
+          # CONFIG_PACKAGE_kmod-usb-ohci-pci=y
+          # CONFIG_PACKAGE_kmod-usb2=y
+          # CONFIG_PACKAGE_kmod-usb2-pci=y
+          # CONFIG_PACKAGE_kmod-usb3=y
+          # EOF
+          # ³£ÓÃLuCI²å¼þÑ¡Ôñ:
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-app-adbyby-plus=y
+          # CONFIG_PACKAGE_luci-app-aria2=y
+          # CONFIG_PACKAGE_luci-app-baidupcs-web=y
+          # CONFIG_PACKAGE_luci-app-docker=y
+          CONFIG_PACKAGE_luci-app-frpc=y
+          # CONFIG_PACKAGE_luci-app-hd-idle=y
+          # CONFIG_PACKAGE_luci-app-kodexplorer=y
+          # CONFIG_PACKAGE_luci-app-minidlna=y
+          # CONFIG_PACKAGE_luci-app-openvpn=y
+          # CONFIG_PACKAGE_luci-app-openvpn-server=y
+          # CONFIG_PACKAGE_luci-app-qbittorrent=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks=y
+          # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
+          # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Socks=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
+          CONFIG_PACKAGE_luci-app-ttyd=y
+          # CONFIG_PACKAGE_luci-app-v2ray-server=y
+          # CONFIG_PACKAGE_luci-app-verysync=y
+          # CONFIG_PACKAGE_luci-app-webadmin=y
+          CONFIG_PACKAGE_luci-app-serverchan=y
+          # CONFIG_PACKAGE_luci-app-wrtbwmon=y
+          CONFIG_PACKAGE_luci-app-syncdial=y
+          CONFIG_PACKAGE_luci-app-zerotier=y
+          CONFIG_PACKAGE_luci-app-flowoffload=y
+          EOF
+          # LuCIÖ÷Ìâ:
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-theme-argon=y
+          CONFIG_PACKAGE_luci-theme-netgear=y
+          CONFIG_PACKAGE_luci-theme-atmaterial=y
+          EOF
+          # ³£ÓÃÈí¼þ°ü:
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_curl=y
+          CONFIG_PACKAGE_htop=y
+          CONFIG_PACKAGE_nano=y
+          CONFIG_PACKAGE_screen=y
+          CONFIG_PACKAGE_tree=y
+          CONFIG_PACKAGE_vim-fuller=y
+          CONFIG_PACKAGE_wget=y
+          EOF
+          # È¡Ïû±àÒëVMware¾µÏñÒÔ¼°¾µÏñÌî³ä (²»ÒªÉ¾³ý±»Ëõ½øµÄ×¢ÊÍ·ûºÅ):
+          cat >> .config <<EOF
+          # CONFIG_TARGET_IMAGES_PAD is not set
+          # CONFIG_VMDK_IMAGES is not set
+          EOF
+          # 
+          # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö½áÊø========================
+          # 
+          sed -i 's/^[ \t]*//g' ./.config
+          make defconfig
+      - name: Download package source code
+        run: |
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+      - name: Compile firmware
+        run: |
+          echo -e "$(nproc) thread build."
+          make -j$(nproc) V=s
+      - name : Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt firmware
+          path: bin/targets
